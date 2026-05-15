@@ -6,13 +6,12 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Login to ACR
-        run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u "${{ secrets.ACR_USERNAME }}" --password-stdin registry.cn-hangzhou.aliyuncs.com
-
-      - name: Sync images
+      - name: Pull & Push to ACR
         run: |
+          echo 'qwe323700!@#' | docker login -u 398233817@qq.com --password-stdin registry.cn-hangzhou.aliyuncs.com
           for img in "iiidev/iii:0.11.2" "busybox:1.36"; do
             tag=$(echo $img | tr '/:' '_-')
+            echo "Syncing $img -> registry.cn-hangzhou.aliyuncs.com/laoluo-warehouse/$tag"
             docker pull "$img"
             docker tag "$img" "registry.cn-hangzhou.aliyuncs.com/laoluo-warehouse/$tag"
             docker push "registry.cn-hangzhou.aliyuncs.com/laoluo-warehouse/$tag"
