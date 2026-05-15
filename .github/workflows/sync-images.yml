@@ -1,18 +1,22 @@
-name: Sync Docker Images to ACR
+name: Sync Images to GHCR
 on:
   workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
-      - name: Pull & Push to ACR
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Sync
         run: |
-          echo 'qwe323700!@#' | docker login -u 398233817@qq.com --password-stdin registry.cn-hangzhou.aliyuncs.com
           for img in "iiidev/iii:0.11.2" "busybox:1.36"; do
             tag=$(echo $img | tr '/:' '_-')
-            echo "Syncing $img -> registry.cn-hangzhou.aliyuncs.com/laoluo-warehouse/$tag"
+            echo "Syncing $img -> ghcr.io/alleyluo/$tag"
             docker pull "$img"
-            docker tag "$img" "registry.cn-hangzhou.aliyuncs.com/laoluo-warehouse/$tag"
-            docker push "registry.cn-hangzhou.aliyuncs.com/laoluo-warehouse/$tag"
+            docker tag "$img" "ghcr.io/alleyluo/$tag"
+            docker push "ghcr.io/alleyluo/$tag"
           done
